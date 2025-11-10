@@ -4,14 +4,15 @@ flowchart TB
         B1 -->|Decrypt using same Key K| C1[Plaintext]
         N1["• One key used for both encryption & decryption<br/>• Fast and efficient (AES, ChaCha20)<br/>• Requires secure key sharing"]
     end
-
+    Symmetric_Encryption -->|Used for| D1["Bulk data encryption\n(e.g., file storage, session traffic)"]
+    
+    D1 --> Asymmetric_Encryption
+    
     subgraph Asymmetric_Encryption["🔑 Asymmetric Encryption (Public / Private Key Pair)"]
         A2[Plaintext] -->|Encrypt using Public Key Kpub| B2[Ciphertext]
         B2 -->|Decrypt using Private Key Kpriv| C2[Plaintext]
         N2["• Two keys: one public, one private<br/>• Public key can be shared freely<br/>• Slower than symmetric, used for key exchange or signatures<br/>• Example: TLS handshake, RSA, ECC"]
     end
-
-    Symmetric_Encryption -->|Used for| D1["Bulk data encryption\n(e.g., file storage, session traffic)"]
     Asymmetric_Encryption -->|Used for| D2["Key exchange, signatures,\nidentity verification"]
 
     style Symmetric_Encryption fill:#d1f0ff,stroke:#0099cc,stroke-width:1px
