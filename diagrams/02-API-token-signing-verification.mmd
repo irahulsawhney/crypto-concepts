@@ -30,6 +30,8 @@ flowchart TB
 
     %% Data Flow
     J --> C1
+    C1 ~~~ separator1[ ]
+    separator1 ~~~ Verifier
     C1 -->|Sends Token in Request| V1
 
     %% Styling
@@ -37,3 +39,4 @@ flowchart TB
     style Consumer stroke:#0099cc,stroke-width:1px
     style Verifier stroke:#00b386,stroke-width:1px
     style Title fill:none,stroke:none
+    style separator1 fill:none,stroke:none
