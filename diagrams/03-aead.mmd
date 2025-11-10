@@ -8,7 +8,7 @@ flowchart TB
   subgraph Sender["📤 Sender (Encrypt)"]
     direction TB
     P["📄 Plaintext P<br/>(secret data)"]
-    AD["📋 Associated Data AD<br/>• NOT encrypted<br/>• IS authenticated<br/>• Examples: headers, userID"]
+    AD["📋 Associated Data AD<br/>• NOT encrypted (sent plaintext)<br/>• IS authenticated (tamper-evident)<br/>• Should contain NON-SECRET metadata<br/>• Examples: headers, userID, timestamp, API version<br/>• ⚠️ Never put secrets in AD!"]
     K[("🔑 Secret Key K<br/>(shared with receiver)")]
     N["🎲 Nonce N<br/>• Random/unique<br/>• Never reuse with same K"]
     
@@ -32,7 +32,7 @@ flowchart TB
   AD --> Channel
   
   subgraph Channel["🌐 Network / Untrusted Channel"]
-    Bundle["📦 Sent Together:<br/>• Ciphertext C<br/>• Auth Tag T<br/>• Nonce N<br/>• Associated Data AD<br/><br/>⚠️ Attacker can see/modify"]
+    Bundle["📦 Sent Together:<br/>• Ciphertext C (encrypted - secret)<br/>• Auth Tag T (public - proves integrity)<br/>• Nonce N (public - must be unique)<br/>• Associated Data AD (plaintext - visible)<br/><br/>⚠️ Attacker can see AD, N, C, T<br/>⚠️ But cannot modify without breaking tag<br/>⚠️ And cannot decrypt C without key K"]
   end
 
   Channel --> Receiver
@@ -49,7 +49,7 @@ flowchart TB
     RecompTag --> Compare
     
     Compare -->|✅ Match!| Valid["🎉 Success!<br/>→ Decrypt C → P<br/><br/>✓ C, AD, N unchanged<br/>✓ Sender had key K<br/>✓ No tampering"]
-    Compare -->|❌ No Match!| Invalid["🚫 REJECT<br/>No plaintext revealed<br/><br/>Why tags differ:<br/>C or AD or N was changed, or Wrong K used → different T'<br/>• Attacker can't forge T without K"]
+    Compare -->|❌ No Match!| Invalid["🚫 REJECT<br/>No plaintext revealed<br/><br/>Why tags differ:<br/>• C or AD or N was changed, or Wrong K used → different T'<br/>• Attacker can't forge T without K"]
     
     RNote["💡 Key Point:<br/>Receiver recomputes tag T' using same inputs<br/>If T' ≠ T, something changed or wrong key<br/>Attacker without K cannot create matching tag"]
   end

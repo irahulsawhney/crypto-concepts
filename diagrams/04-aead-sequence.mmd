@@ -12,7 +12,7 @@ sequenceDiagram
   
   S-->>R: Send N, AD, C, T
   
-  Note over A: Attacker can intercept and modify<br/>Example: Change C to C' or AD to AD'<br/>BUT cannot create valid tag without K<br/>MAC is one-way: cannot reverse to find K
+  Note over A: ⚠️ AD is plaintext - attacker can read it<br/>Use AD for NON-SECRET metadata only<br/>Examples: headers, request ID, timestamp<br/>Never put passwords or secrets in AD!<br/><br/>Attacker can modify C or AD<br/>BUT cannot create valid tag without K<br/>MAC is one-way: cannot reverse to find K
   
   Note over R: 3. Recompute Tag using same MAC algorithm<br/>T' = MAC with K, N, C, AD<br/>Uses same hash function with received data
   R->>R: 4. Compare: Is T' equal to T?
