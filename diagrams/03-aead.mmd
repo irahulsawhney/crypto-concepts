@@ -20,10 +20,10 @@ flowchart TB
     E["⚙️ AEAD Encrypt"]
     
     E --> C["🔒 Ciphertext C<br/>(encrypted P)"]
-    E --> TagCreate["🔧 Tag Creation:<br/>T = MAC with K, N, C, AD<br/><br/>Tag is a cryptographic hash that binds:<br/>• Ciphertext C<br/>• Associated Data AD<br/>• Nonce N<br/>• Secret Key K"]
+    E --> TagCreate["🔧 Tag Creation:<br/>T = MAC (Message Auth Code) with K, N, C, AD<br/><br/>MAC Algorithm (e.g., HMAC, Poly1305):<br/>• Takes inputs: K, N, C, AD<br/>• Runs cryptographic hash function<br/>• Outputs fixed-size tag T<br/><br/>Tag binds C + AD + N to secret key K"]
     TagCreate --> T["✅ Auth Tag T<br/>(proves integrity)"]
     
-    SNote["💡 Key Point:<br/>Tag T = f with K, N, C, AD<br/>Change ANY input → completely different tag<br/>Without K, attacker cannot create valid tag"]
+    SNote["💡 Key Point:<br/>Tag T = HMAC-SHA256 with K, N, C, AD or similar<br/>One-way function: Cannot reverse to get K<br/>Change ANY input → completely different tag<br/>Without K, attacker cannot create valid tag"]
   end
 
   C --> Channel
@@ -41,7 +41,7 @@ flowchart TB
     direction TB
     KR[("🔑 Secret Key K<br/>(same as sender)")]
     
-    RecompTag["🔧 Recompute Tag:<br/>T' = MAC with K, N, C, AD<br/><br/>Using received C, AD, N"]
+    RecompTag["🔧 Recompute Tag:<br/>T' = MAC (Message Auth Code) with K, N, C, AD<br/><br/>Using received C, AD, N"]
     
     Compare["⚖️ Compare Tags:<br/>Is T' = T?"]
     
@@ -49,7 +49,7 @@ flowchart TB
     RecompTag --> Compare
     
     Compare -->|✅ Match!| Valid["🎉 Success!<br/>→ Decrypt C → P<br/><br/>✓ C, AD, N unchanged<br/>✓ Sender had key K<br/>✓ No tampering"]
-    Compare -->|❌ No Match!| Invalid["🚫 REJECT<br/>No plaintext revealed<br/><br/>Why tags differ:<br/>• C was modified → different T'<br/>• AD was changed → different T'<br/>• N was altered → different T'<br/>• Wrong K used → different T'<br/>• Attacker can't forge T without K"]
+    Compare -->|❌ No Match!| Invalid["🚫 REJECT<br/>No plaintext revealed<br/><br/>Why tags differ:<br/>C or AD or N was changed, or Wrong K used → different T'<br/>• Attacker can't forge T without K"]
     
     RNote["💡 Key Point:<br/>Receiver recomputes tag T' using same inputs<br/>If T' ≠ T, something changed or wrong key<br/>Attacker without K cannot create matching tag"]
   end

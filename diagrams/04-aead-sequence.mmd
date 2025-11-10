@@ -8,13 +8,13 @@ sequenceDiagram
   Note over S: Choose N unique per key, have K shared beforehand
   
   S->>S: 1. Encrypt: C = Encrypt with K, N, P
-  Note over S: 2. Create Tag: T = MAC with K, N, C, AD<br/>Tag binds C + AD + N to secret key K
+  Note over S: 2. Create Tag using MAC algorithm (e.g., HMAC-SHA256, Poly1305)<br/>T = MAC with K, N, C, AD<br/>Process: Hash function combines all inputs with key K<br/>Output: Fixed-size tag T that binds all data to K
   
   S-->>R: Send N, AD, C, T
   
-  Note over A: Attacker can intercept and modify<br/>Example: Change C to C' or AD to AD'<br/>BUT cannot create valid tag without K
+  Note over A: Attacker can intercept and modify<br/>Example: Change C to C' or AD to AD'<br/>BUT cannot create valid tag without K<br/>MAC is one-way: cannot reverse to find K
   
-  Note over R: 3. Recompute Tag: T' = MAC with K, N, C, AD<br/>Using received C, AD, N
+  Note over R: 3. Recompute Tag using same MAC algorithm<br/>T' = MAC with K, N, C, AD<br/>Uses same hash function with received data
   R->>R: 4. Compare: Is T' equal to T?
   
   alt Tags Match (T' = T)
