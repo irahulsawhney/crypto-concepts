@@ -20,9 +20,10 @@ flowchart TB
     E["⚙️ AEAD Encrypt"]
     
     E --> C["🔒 Ciphertext C<br/>(encrypted P)"]
-    E --> T["✅ Auth Tag T<br/>(proves integrity)"]
+    E --> TagCreate["🔧 Tag Creation:<br/>T = MAC with K, N, C, AD<br/><br/>Tag is a cryptographic hash that binds:<br/>• Ciphertext C<br/>• Associated Data AD<br/>• Nonce N<br/>• Secret Key K"]
+    TagCreate --> T["✅ Auth Tag T<br/>(proves integrity)"]
     
-    SNote["💡 Sender combines:<br/>• Encrypts plaintext → ciphertext<br/>• Creates tag to authenticate C + AD + N"]
+    SNote["💡 Key Point:<br/>Tag T = f with K, N, C, AD<br/>Change ANY input → completely different tag<br/>Without K, attacker cannot create valid tag"]
   end
 
   C --> Channel
@@ -40,14 +41,17 @@ flowchart TB
     direction TB
     KR[("🔑 Secret Key K<br/>(same as sender)")]
     
-    Vr["⚙️ AEAD Decrypt & Verify"]
+    RecompTag["🔧 Recompute Tag:<br/>T' = MAC with K, N, C, AD<br/><br/>Using received C, AD, N"]
     
-    KR -.->|decrypts & verifies| Vr
+    Compare["⚖️ Compare Tags:<br/>Is T' = T?"]
     
-    Vr -->|✅ Tag Valid| Valid["🎉 Success!<br/>→ Output Plaintext P<br/><br/>✓ Integrity confirmed<br/>✓ Authenticity confirmed"]
-    Vr -->|❌ Tag Invalid| Invalid["🚫 REJECT<br/>No plaintext revealed<br/><br/>Reasons:<br/>• Data was tampered<br/>• Wrong key used<br/>• AD or N changed"]
+    KR -.->|used to compute T'| RecompTag
+    RecompTag --> Compare
     
-    RNote["💡 Receiver verifies:<br/>• Tag T proves C + AD + N authentic<br/>• Only then decrypts C → P"]
+    Compare -->|✅ Match!| Valid["🎉 Success!<br/>→ Decrypt C → P<br/><br/>✓ C, AD, N unchanged<br/>✓ Sender had key K<br/>✓ No tampering"]
+    Compare -->|❌ No Match!| Invalid["🚫 REJECT<br/>No plaintext revealed<br/><br/>Why tags differ:<br/>• C was modified → different T'<br/>• AD was changed → different T'<br/>• N was altered → different T'<br/>• Wrong K used → different T'<br/>• Attacker can't forge T without K"]
+    
+    RNote["💡 Key Point:<br/>Receiver recomputes tag T' using same inputs<br/>If T' ≠ T, something changed or wrong key<br/>Attacker without K cannot create matching tag"]
   end
 
   %% Styling
