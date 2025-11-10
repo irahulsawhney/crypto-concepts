@@ -1,21 +1,48 @@
 flowchart TB
+    %% === SYMMETRIC ENCRYPTION ===
     subgraph Symmetric_Encryption["🔒 Symmetric Encryption (Single Shared Key)"]
-        A1[Plaintext] -->|Encrypt using Key K| B1[Ciphertext]
-        B1 -->|Decrypt using same Key K| C1[Plaintext]
-        N1["• One key used for both encryption & decryption<br/>• Fast and efficient (AES, ChaCha20)<br/>• Requires secure key sharing"]
+        direction TB
+        P1["Data Publisher / Owner"]
+        C1["Data Consumer / Recipient"]
+        P1 -->|Encrypt using Key K| B1[Ciphertext]
+        B1 -->|Decrypt using same Key K| C1
+        N1["• One shared key used for both encryption & decryption<br/>• Fast and efficient (AES, ChaCha20)<br/>• Requires secure key sharing before use"]
     end
-    Symmetric_Encryption -->|Used for| D1["Bulk data encryption\n(e.g., file storage, session traffic)"]
-    
+    Symmetric_Encryption -->|Used for| D1["Bulk data encryption<br/>(e.g., file storage, session traffic)"]
+
     D1 ~~~ separator1[ ]
     separator1 ~~~ Asymmetric_Encryption
-    
+
+    %% === ASYMMETRIC ENCRYPTION ===
     subgraph Asymmetric_Encryption["🔑 Asymmetric Encryption (Public / Private Key Pair)"]
-        A2[Plaintext] -->|Encrypt using Public Key Kpub| B2[Ciphertext]
-        B2 -->|Decrypt using Private Key Kpriv| C2[Plaintext]
-        N2["• Two keys: one public, one private<br/>• Public key can be shared freely<br/>• Slower than symmetric, used for key exchange or signatures<br/>• Example: TLS handshake, RSA, ECC"]
+        direction TB
+        P2["Data Publisher / Owner"]
+        C2["Data Consumer / Recipient"]
+        P2 -->|Encrypt using Public Key Kpub| B2[Ciphertext]
+        B2 -->|Decrypt using Private Key Kpriv| C2
+        N2["• Two keys: Public & Private<br/>• Public key shared openly<br/>• Slower than symmetric, used for key exchange or signatures<br/>• Example: RSA, ECC, TLS handshake"]
     end
-    Asymmetric_Encryption -->|Used for| D2["Key exchange, signatures,\nidentity verification"]
+    Asymmetric_Encryption -->|Used for| D2["Key exchange, signatures,<br/>identity verification"]
+
+    D2 ~~~ separator2[ ]
+    separator2 ~~~ Hybrid_Encryption
+
+    %% === HYBRID ENCRYPTION ===
+    subgraph Hybrid_Encryption["🔐 Hybrid Approach (Asymmetric + Symmetric)"]
+        direction TB
+        PH["Data Publisher / Owner"]
+        CH["Data Consumer / Recipient"]
+        PH -->|1️⃣ Generate random session key (Ks)| Step1["Ephemeral Symmetric Key Ks"]
+        PH -->|2️⃣ Encrypt Ks with recipient’s Public Key (Kpub)| Step2["Encrypted Session Key (E_Kpub(Ks))"]
+        Step2 -->|3️⃣ Send Encrypted Ks + Ciphertext| CH
+        CH -->|4️⃣ Decrypt Ks using Private Key (Kpriv)| Step3["Recovered Ks"]
+        CH -->|5️⃣ Use Ks to decrypt data (AES, ChaCha20, etc.)| Step4["Plaintext"]
+        NH["• Combines best of both worlds:<br/>  – Asymmetric used once for secure key exchange<br/>  – Symmetric used for fast, large-scale data encryption<br/>• Example: TLS, PGP, HTTPS"]
+    end
+    Hybrid_Encryption -->|Used for| D3["Secure communications at scale<br/>(e.g., TLS, PGP, SSH)"]
 
     style Symmetric_Encryption stroke:#0099cc,stroke-width:1px
     style Asymmetric_Encryption stroke:#7a42f4,stroke-width:1px
+    style Hybrid_Encryption stroke:#00b386,stroke-width:1px
     style separator1 fill:none,stroke:none
+    style separator2 fill:none,stroke:none
