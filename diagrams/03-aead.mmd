@@ -1,0 +1,84 @@
+%% AEAD (Authenticated Encryption with Associated Data) — Mermaid Cheat Sheet
+%% Save as .mmd and preview with any Mermaid renderer.
+
+%% ------------ FLOW OVERVIEW ------------
+flowchart LR
+  subgraph Sender["Sender (Encrypt)"]
+    P[Plaintext P]
+    AD[Associated Data AD\n• visible\n• not encrypted]
+    K[(Secret Key K)]
+    N[Nonce / IV N\n• unique per key]
+    E[[AEAD_Encrypt]]
+    P --> E
+    AD --> E
+    K --> E
+    N --> E
+    E --> C[Ciphertext C]
+    E --> T[Authentication Tag T]
+  end
+
+  subgraph Channel["Network Channel (Attacker can see/modify traffic)"]
+    C --> Cx[C]
+    T --> Tx[T]
+    N --> Nx[N]
+    AD --> ADx[AD]
+  end
+
+  subgraph Receiver["Receiver (Verify & Decrypt)"]
+    KR[(Secret Key K\n• shared securely beforehand)]
+    Vr[[AEAD_Decrypt_Verify]]
+    Cx --> Vr
+    Tx --> Vr
+    Nx --> Vr
+    ADx --> Vr
+    KR --> Vr
+    Vr -->|Tag valid| Pout[Plaintext Out]
+    Vr -->|Tag invalid| X[[Reject\nno plaintext revealed]]
+  end
+
+  classDef callout fill:#f7f7f7,stroke:#bbb,stroke-width:1px,color:#111;
+  classDef strong fill:#e8f5e9,stroke:#7cb342,stroke-width:1px,color:#1b5e20;
+
+  AD:::callout
+  N:::callout
+  T:::strong
+  Vr:::strong
+
+  %% Notes
+  %% - Confidentiality: P is hidden inside C.
+  %% - Integrity & Authenticity: T binds (C, AD, N) to K; tampering causes verify failure.
+  %% - AD is authenticated but not encrypted (visible headers/metadata).
+  %% - N must NEVER repeat with the same K. Reuse can break security catastrophically.
+
+%% ------------ SEQUENCE DIAGRAM ------------
+sequenceDiagram
+  autonumber
+  participant S as Sender
+  participant R as Receiver
+
+  Note over S: Choose N (unique per key); have K shared beforehand
+  S->>S: Encrypt with K, N, P, AD
+  S-->>R: Send N, AD, C, T (AD is visible; P is hidden in C)
+
+  R->>R: Verify T over K, N, C, AD
+  alt Tag valid
+    R->>R: P = AEAD_Decrypt with K, N, C, AD
+    R-->>R: Output plaintext
+  else Tag invalid
+    R-->>R: Reject - no plaintext revealed
+  end
+
+  Note over R: Any change to C, AD, or N causes tag verification to fail
+
+%% ------------ AT-A-GLANCE ------------
+%% • AEAD = Authenticated Encryption with Associated Data
+%% • Protects two things at once:
+%%     1) Confidentiality (encrypts P into C)
+%%     2) Integrity/Authenticity (T proves C+AD+N come from someone with K)
+%% • Associated Data (AD):
+%%     - Not encrypted (visible), but authenticated (tamper-evident)
+%%     - Examples: headers, user/account IDs, API version, timestamps
+%% • Nonce/IV (N):
+%%     - Unique per (K) to prevent reuse attacks
+%% • Typical algorithms:
+%%     - AES-GCM, ChaCha20-Poly1305
