@@ -6,8 +6,6 @@ flowchart TB
     end
     Symmetric_Encryption -->|Used for| D1["Bulk data encryption\n(e.g., file storage, session traffic)"]
     
-    D1 --> Asymmetric_Encryption
-    
     subgraph Asymmetric_Encryption["🔑 Asymmetric Encryption (Public / Private Key Pair)"]
         A2[Plaintext] -->|Encrypt using Public Key Kpub| B2[Ciphertext]
         B2 -->|Decrypt using Private Key Kpriv| C2[Plaintext]
@@ -15,5 +13,9 @@ flowchart TB
     end
     Asymmetric_Encryption -->|Used for| D2["Key exchange, signatures,\nidentity verification"]
 
-    style Symmetric_Encryption fill:#d1f0ff,stroke:#0099cc,stroke-width:1px
-    style Asymmetric_Encryption fill:#f5e8ff,stroke:#7a42f4,stroke-width:1px
+    style Symmetric_Encryption fill:#e6f3ff,stroke:#0066cc,stroke-width:2px,color:#000
+    style Asymmetric_Encryption fill:#f0e6ff,stroke:#6600cc,stroke-width:2px,color:#000
+    style N1 fill:#fff,stroke:#333,color:#000
+    style N2 fill:#fff,stroke:#333,color:#000
+    style D1 fill:#fff,stroke:#333,color:#000
+    style D2 fill:#fff,stroke:#333,color:#000
