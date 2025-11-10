@@ -1,0 +1,19 @@
+%% AEAD Sequence Diagram - Encryption and Verification Flow
+sequenceDiagram
+  autonumber
+  participant S as Sender
+  participant R as Receiver
+
+  Note over S: Choose N (unique per key); have K shared beforehand
+  S->>S: Encrypt with K, N, P, AD
+  S-->>R: Send N, AD, C, T (AD is visible; P is hidden in C)
+
+  R->>R: Verify T over K, N, C, AD
+  alt Tag valid
+    R->>R: P = AEAD_Decrypt with K, N, C, AD
+    R-->>R: Output plaintext
+  else Tag invalid
+    R-->>R: Reject - no plaintext revealed
+  end
+
+  Note over R: Any change to C, AD, or N causes tag verification to fail
