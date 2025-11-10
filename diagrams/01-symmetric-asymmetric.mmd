@@ -40,6 +40,7 @@ flowchart TB
         CH -->|5️⃣ Consumer decrypts Ks using their Private Key| Step4["Recovered Ks"]
         Step4 -->|6️⃣ Consumer uses Ks to decrypt data| Step5["Plaintext"]
         NH["• Combines best of both worlds:<br/>  – Asymmetric used once for secure key exchange<br/>  – Symmetric used for fast, large-scale data encryption<br/>• Example: TLS, PGP, HTTPS"]
+        Analogy["💡 Analogy:<br/>Asymmetric encryption is the door lock that securely hands over a house key.<br/>Symmetric encryption is the house key itself — used repeatedly once you're inside."]
     end
     Hybrid_Encryption -->|Used for| D3["Secure communications at scale<br/>(e.g., TLS, PGP, SSH)"]
 
