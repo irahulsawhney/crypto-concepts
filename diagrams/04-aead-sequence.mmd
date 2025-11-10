@@ -5,7 +5,7 @@ sequenceDiagram
   participant A as Attacker (optional)
   participant R as Receiver
 
-  Note over S: Choose N unique per key, have K shared beforehand
+  Note over S: Choose unique nonce N for this message<br/>N must be different for each message using key K<br/>Example: counter (1, 2, 3...) or random<br/>K is shared beforehand and reused for many messages
   
   S->>S: 1. Encrypt: C = Encrypt with K, N, P
   Note over S: 2. Create Tag using MAC algorithm (e.g., HMAC-SHA256, Poly1305)<br/>T = MAC with K, N, C, AD<br/>Process: Hash function combines all inputs with key K<br/>Output: Fixed-size tag T that binds all data to K

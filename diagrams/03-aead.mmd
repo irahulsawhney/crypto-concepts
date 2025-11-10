@@ -10,7 +10,7 @@ flowchart TB
     P["📄 Plaintext P<br/>(secret data)"]
     AD["📋 Associated Data AD<br/>• NOT encrypted (sent plaintext)<br/>• IS authenticated (tamper-evident)<br/>• Should contain NON-SECRET metadata<br/>• Examples: headers, userID, timestamp, API version<br/>• ⚠️ Never put secrets in AD!"]
     K[("🔑 Secret Key K<br/>(shared with receiver)")]
-    N["🎲 Nonce N<br/>• Random/unique<br/>• Never reuse with same K"]
+    N["🎲 Nonce N<br/>• Unique per message with same key K<br/>• Can be sequential (1, 2, 3...) or random<br/>• NEVER reuse nonce with same key<br/>• Nonce reuse = catastrophic security failure"]
     
     P --> E
     AD --> E
