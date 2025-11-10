@@ -6,8 +6,8 @@ flowchart TB
     end
 
     subgraph Asymmetric_Encryption["🔑 Asymmetric Encryption (Public / Private Key Pair)"]
-        A2[Plaintext] -->|Encrypt using Public Key (Kpub)| B2[Ciphertext]
-        B2 -->|Decrypt using Private Key (Kpriv)| C2[Plaintext]
+        A2[Plaintext] -->|Encrypt using Public Key Kpub| B2[Ciphertext]
+        B2 -->|Decrypt using Private Key Kpriv| C2[Plaintext]
         N2["• Two keys: one public, one private<br/>• Public key can be shared freely<br/>• Slower than symmetric, used for key exchange or signatures<br/>• Example: TLS handshake, RSA, ECC"]
     end
 
