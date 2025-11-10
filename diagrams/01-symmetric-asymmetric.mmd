@@ -35,8 +35,8 @@ flowchart TB
         PH -->|1️⃣ Publisher generates random session key Ks| Step1["Ephemeral Symmetric Key Ks"]
         Step1 -->|2️⃣ Encrypt actual data with Ks| Step2["Ciphertext of Data"]
         Step1 -->|3️⃣ Encrypt Ks with Consumer's Public Key| Step3["Encrypted Session Key"]
-        Step2 -->|4️⃣ Send both Encrypted Ks + Ciphertext| CH
-        Step3 -->|4️⃣ Send both Encrypted Ks + Ciphertext| CH
+        Step2 -->|4️⃣ Send Ciphertext| CH
+        Step3 -->|4️⃣ Send Encrypted Ks| CH
         CH -->|5️⃣ Consumer decrypts Ks using their Private Key| Step4["Recovered Ks"]
         Step4 -->|6️⃣ Consumer uses Ks to decrypt data| Step5["Plaintext"]
         NH["• Combines best of both worlds:<br/>  – Asymmetric used once for secure key exchange<br/>  – Symmetric used for fast, large-scale data encryption<br/>• Example: TLS, PGP, HTTPS"]
