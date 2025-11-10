@@ -6,7 +6,7 @@ sequenceDiagram
 
   Note over S: Choose N unique per key, have K shared beforehand
   S->>S: Encrypt with K, N, P, AD
-  S-->>R: Send N, AD, C, T (AD is visible; P is hidden in C)
+  S-->>R: Send N, AD, C, T (AD is visible, P is hidden in C)
 
   R->>R: Verify T over K, N, C, AD
   alt Tag valid
