@@ -32,11 +32,11 @@ flowchart TB
         direction TB
         PH["Data Publisher / Owner"]
         CH["Data Consumer / Recipient"]
-        PH -->|1️⃣ Generate random session key (Ks)| Step1["Ephemeral Symmetric Key Ks"]
-        PH -->|2️⃣ Encrypt Ks with recipient’s Public Key (Kpub)| Step2["Encrypted Session Key (E_Kpub(Ks))"]
+        PH -->|1️⃣ Generate random session key Ks| Step1["Ephemeral Symmetric Key Ks"]
+        PH -->|2️⃣ Encrypt Ks with recipient's Public Key Kpub| Step2["Encrypted Session Key"]
         Step2 -->|3️⃣ Send Encrypted Ks + Ciphertext| CH
-        CH -->|4️⃣ Decrypt Ks using Private Key (Kpriv)| Step3["Recovered Ks"]
-        CH -->|5️⃣ Use Ks to decrypt data (AES, ChaCha20, etc.)| Step4["Plaintext"]
+        CH -->|4️⃣ Decrypt Ks using Private Key Kpriv| Step3["Recovered Ks"]
+        CH -->|5️⃣ Use Ks to decrypt data| Step4["Plaintext"]
         NH["• Combines best of both worlds:<br/>  – Asymmetric used once for secure key exchange<br/>  – Symmetric used for fast, large-scale data encryption<br/>• Example: TLS, PGP, HTTPS"]
     end
     Hybrid_Encryption -->|Used for| D3["Secure communications at scale<br/>(e.g., TLS, PGP, SSH)"]
