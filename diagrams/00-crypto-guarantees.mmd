@@ -1,0 +1,194 @@
+%% Crypto Fundamentals — Guarantees Map%% Crypto Fundamentals — Guarantees Map
+
+%% ---------- PART 1: Stack & Where Guarantees Apply ----------%% ---------- PART 1: Stack & Where Guarantees Apply ----------
+
+flowchart TBflowchart TB
+
+  title["HTTPS Stack - top to bottom"]  title["HTTPS Stack - top to bottom"]
+
+  HTTP["HTTP - application protocol"]  HTTP["HTTP - application protocol"]
+
+  TLS["TLS - secure channel"]  TLS["TLS - secure channel"]
+
+  TCP["TCP - reliable transport"]  TCP["TCP - reliable transport"]
+
+  IP["IP - routing"]  IP["IP - routing"]
+
+
+
+  HTTP --> TLS --> TCP --> IP  HTTP --> TLS --> TCP --> IP
+
+
+
+  subgraph Guarantees_by_Layer["Key Guarantees - what protects what"]  subgraph Guarantees_by_Layer["Key Guarantees - what protects what"]
+
+    direction TB    direction TB
+
+    G_TLS["TLS using AEAD:\n• Confidentiality - encrypts app bytes\n• Integrity - tamper detection\n• Authenticity - server identity via cert\n• Forward Secrecy - with ECDHE"]    G_TLS["TLS using AEAD:\n• Confidentiality - encrypts app bytes\n• Integrity - tamper detection\n• Authenticity - server identity via cert\n• Forward Secrecy - with ECDHE"]
+
+    G_HTTP["HTTP over TLS:\n• App-level semantics - methods, headers\n• May carry its own auth - cookies, tokens\n• Not a crypto guarantee by itself"]    G_HTTP["HTTP over TLS:\n• App-level semantics - methods, headers\n• May carry its own auth - cookies, tokens\n• Not a crypto guarantee by itself"]
+
+    G_TCP["TCP:\n• Ordered, reliable delivery\n• No confidentiality/integrity/auth by itself"]    G_TCP["TCP:\n• Ordered, reliable delivery\n• No confidentiality/integrity/auth by itself"]
+
+    G_IP["IP:\n• Best-effort routing\n• No cryptographic guarantees"]    G_IP["IP:\n• Best-effort routing\n• No cryptographic guarantees"]
+
+  end  end
+
+
+
+  TLS -.provides.-> G_TLS  TLS -.provides.-> G_TLS
+
+  HTTP -.semantics over TLS.-> G_HTTP  HTTP -.semantics over TLS.-> G_HTTP
+
+  TCP -.transport only.-> G_TCP  TCP -.transport only.-> G_TCP
+
+  IP -.routing only.-> G_IP  IP -.routing only.-> G_IP
+
+
+
+  classDef layer fill:#eef6ff,stroke:#90caf9,color:#0d47a1,stroke-width:1px  classDef layer fill:#eef6ff,stroke:#90caf9,color:#0d47a1,stroke-width:1px
+
+  classDef note fill:#f7f7f7,stroke:#bbb,color:#333,stroke-width:1px  classDef note fill:#f7f7f7,stroke:#bbb,color:#333,stroke-width:1px
+
+
+
+  class HTTP,TLS,TCP,IP layer  class HTTP,TLS,TCP,IP layer
+
+  class G_TLS,G_HTTP,G_TCP,G_IP note  class G_TLS,G_HTTP,G_TCP,G_IP note
+
+
+
+------
+
+
+
+%% ---------- PART 2: Guarantees We Covered So Far ----------%% ---------- PART 2: Guarantees We Covered So Far ----------
+
+flowchart TBflowchart TB
+
+  subgraph Covered["Covered Guarantees & Concepts"]  subgraph Covered["Covered Guarantees & Concepts"]
+
+    direction TB    direction TB
+
+    C1["Confidentiality\nEncryption hides data"]    C1["Confidentiality\nEncryption hides data"]
+
+    C2["Integrity & Authenticity\nHMAC / AEAD tag"]    C2["Integrity & Authenticity\nHMAC / AEAD tag"]
+
+    C3["Hashing vs KDFs\nSalted, slow: bcrypt/scrypt/Argon2id"]    C3["Hashing vs KDFs\nSalted, slow: bcrypt/scrypt/Argon2id"]
+
+    C4["MAC vs Digital Signature\nshared secret vs public/private"]    C4["MAC vs Digital Signature\nshared secret vs public/private"]
+
+    C5["AEAD Basics\nNONCE, TAG, AD — AD is visible but authenticated"]    C5["AEAD Basics\nNONCE, TAG, AD — AD is visible but authenticated"]
+
+    C6["Hybrid Encryption\nasymmetric to set up, symmetric for data"]    C6["Hybrid Encryption\nasymmetric to set up, symmetric for data"]
+
+    C7["Forward Secrecy\nephemeral DH: ECDHE"]    C7["Forward Secrecy\nephemeral DH: ECDHE"]
+
+  end  end
+
+
+
+  classDef done fill:#e8f5e9,stroke:#7cb342,color:#1b5e20,stroke-width:1px  classDef done fill:#e8f5e9,stroke:#7cb342,color:#1b5e20,stroke-width:1px
+
+  class C1,C2,C3,C4,C5,C6,C7 done  class C1,C2,C3,C4,C5,C6,C7 done
+
+
+
+------
+
+
+
+%% ---------- PART 3: What's Next - Upcoming Topics ----------%% ---------- PART 3: What’s Next (Upcoming Topics) ----------
+
+flowchart TBflowchart TB
+
+  subgraph Next["Upcoming to Round Out the Set"]  subgraph Next["Upcoming to Round Out the Set"]
+
+    direction TB    direction TB
+
+    N1["Key Management Architecture\n• Key IDs, rotation, rollback\n• Envelope encryption - data key wrapped by master key\n• KMS/HSM patterns & policies"]    N1["Key Management Architecture\n• Key IDs, rotation, rollback\n• Envelope encryption (data key wrapped by master key)\n• KMS/HSM patterns & policies"]
+
+    N2["At-Rest Encryption Design\n• AEAD record format - nonce, tag, AD, key ID\n• Versioning & algorithm agility\n• Re-encryption and backfills"]    N2["At-Rest Encryption Design\n• AEAD record format (nonce, tag, AD, key ID)\n• Versioning & algorithm agility\n• Re-encryption and backfills"]
+
+    N3["Trust Models\n• Web PKI - CAs, chains, pinning\n• TOFU - SSH, key continuity\n• OIDC/JWT: who trusts whom, HS vs RS/Ed"]    N3["Trust Models\n• Web PKI (CAs, chains), pinning\n• TOFU (SSH), key continuity\n• OIDC/JWT: who trusts whom, HS vs RS/Ed"]
+
+    N4["Threat Modeling lite\n• Actors, capabilities, goals\n• Asset classification, boundaries\n• Misuse/abuse cases & mitigations"]    N4["Threat Modeling (lite)\n• Actors, capabilities, goals\n• Asset classification, boundaries\n• Misuse/abuse cases & mitigations"]
+
+    N5["Service-to-Service Auth\n• mTLS, SPIFFE/SPIRE\n• Token-based JWT, audience & expiry\n• Rotating secrets safely"]    N5["Service-to-Service Auth\n• mTLS, SPIFFE/SPIRE\n• Token-based (JWT), audience & expiry\n• Rotating secrets safely"]
+
+    N6["Operational Considerations\n• Monitoring, key-usage audit\n• Incident response: key compromise playbook\n• Performance & cost tuning"]    N6["Operational Considerations\n• Monitoring, key-usage audit\n• Incident response: key compromise playbook\n• Performance & cost tuning"]
+
+  end  end
+
+
+
+  classDef next fill:#fff8e1,stroke:#ffcc80,color:#e65100,stroke-width:1px  classDef next fill:#fff8e1,stroke:#ffcc80,color:#e65100,stroke-width:1px;
+
+  class N1,N2,N3,N4,N5,N6 next  class N1,N2,N3,N4,N5,N6 next;
+
+
+
+------
+
+
+
+%% ---------- PART 4: Quick AEAD Reminder ----------%% ---------- PART 4: Quick AEAD Reminder ----------
+
+flowchart LRflowchart LR
+
+  K[(Key)]  K[(Key)]
+
+  N[Nonce/IV]  N[Nonce/IV]
+
+  P[Plaintext]  P[Plaintext]
+
+  AD[Associated Data - visible]  AD[Associated Data - visible]
+
+  ENC[[AEAD_Encrypt K,N,P,AD]]  ENC[[AEAD_Encrypt K,N,P,AD]]
+
+  T[Auth Tag]  T[Auth Tag]
+
+  C[Ciphertext]  C[Ciphertext]
+
+
+
+  K --> ENC  K --> ENC
+
+  N --> ENC  N --> ENC
+
+  P --> ENC  P --> ENC
+
+  AD --> ENC  AD --> ENC
+
+  ENC --> C  ENC --> C
+
+  ENC --> T  ENC --> T
+
+
+
+  subgraph Wire["On the wire / Stored with record"]  subgraph Wire["On the wire / Stored with record"]
+
+    direction LR    direction LR
+
+    N    N
+
+    AD    AD
+
+    C    C
+
+    T    T
+
+    note["+ Key ID, not the key"]    note["+ Key ID, not the key"]
+
+  end  end
+
+
+
+  classDef callout fill:#f7f7f7,stroke:#bbb,color:#333  classDef callout fill:#f7f7f7,stroke:#bbb,color:#333
+
+  classDef strong fill:#ede7f6,stroke:#9575cd,color:#4527a0,stroke-width:1px  classDef strong fill:#ede7f6,stroke:#9575cd,color:#4527a0,stroke-width:1px
+
+  class AD,Wire callout  class AD,Wire callout
+
+  class ENC strong  class ENC strong
+
