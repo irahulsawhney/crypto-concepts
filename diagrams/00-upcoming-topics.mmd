@@ -1,0 +1,14 @@
+%% Upcoming Topics to Round Out the Set
+flowchart TB
+  subgraph Next["Upcoming Topics"]
+    direction TB
+    N1["Key Management Architecture\n• Key IDs, rotation, rollback\n• Envelope encryption - data key wrapped by master key\n• KMS/HSM patterns & policies"]
+    N2["At-Rest Encryption Design\n• AEAD record format - nonce, tag, AD, key ID\n• Versioning & algorithm agility\n• Re-encryption and backfills"]
+    N3["Trust Models\n• Web PKI - CAs, chains, pinning\n• TOFU - SSH, key continuity\n• OIDC/JWT: who trusts whom, HS vs RS/Ed"]
+    N4["Threat Modeling lite\n• Actors, capabilities, goals\n• Asset classification, boundaries\n• Misuse/abuse cases & mitigations"]
+    N5["Service-to-Service Auth\n• mTLS, SPIFFE/SPIRE\n• Token-based JWT, audience & expiry\n• Rotating secrets safely"]
+    N6["Operational Considerations\n• Monitoring, key-usage audit\n• Incident response: key compromise playbook\n• Performance & cost tuning"]
+  end
+
+  classDef next fill:#fff8e1,stroke:#ffcc80,color:#e65100,stroke-width:1px
+  class N1,N2,N3,N4,N5,N6 next

@@ -1,0 +1,35 @@
+%% Quick AEAD Reference
+flowchart LR
+  K[(Key)]
+  N[Nonce/IV]
+  P[Plaintext]
+  AD[Associated Data - visible]
+  ENC[[AEAD_Encrypt K,N,P,AD]]
+  T[Auth Tag]
+  C[Ciphertext]
+
+  K --> ENC
+  N --> ENC
+  P --> ENC
+  AD --> ENC
+  ENC --> C
+  ENC --> T
+
+  subgraph Wire["On the wire / Stored with record"]
+    direction LR
+    WN[Nonce]
+    WAD[Associated Data]
+    WC[Ciphertext]
+    WT[Auth Tag]
+    note["+ Key ID, not the key"]
+  end
+
+  N -.-> WN
+  AD -.-> WAD
+  C -.-> WC
+  T -.-> WT
+
+  classDef callout fill:#f7f7f7,stroke:#bbb,color:#333
+  classDef strong fill:#ede7f6,stroke:#9575cd,color:#4527a0,stroke-width:1px
+  class AD,WAD,Wire callout
+  class ENC strong

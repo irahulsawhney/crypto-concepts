@@ -1,0 +1,28 @@
+%% HTTPS Stack & Where Guarantees Apply
+flowchart TB
+  title["HTTPS Stack - top to bottom"]
+  HTTP["HTTP - application protocol"]
+  TLS["TLS - secure channel"]
+  TCP["TCP - reliable transport"]
+  IP["IP - routing"]
+
+  HTTP --> TLS --> TCP --> IP
+
+  subgraph Guarantees_by_Layer["Key Guarantees - what protects what"]
+    direction TB
+    G_TLS["TLS using AEAD:\n• Confidentiality - encrypts app bytes\n• Integrity - tamper detection\n• Authenticity - server identity via cert\n• Forward Secrecy - with ECDHE"]
+    G_HTTP["HTTP over TLS:\n• App-level semantics - methods, headers\n• May carry its own auth - cookies, tokens\n• Not a crypto guarantee by itself"]
+    G_TCP["TCP:\n• Ordered, reliable delivery\n• No confidentiality/integrity/auth by itself"]
+    G_IP["IP:\n• Best-effort routing\n• No cryptographic guarantees"]
+  end
+
+  TLS -.provides.-> G_TLS
+  HTTP -.semantics over TLS.-> G_HTTP
+  TCP -.transport only.-> G_TCP
+  IP -.routing only.-> G_IP
+
+  classDef layer fill:#eef6ff,stroke:#90caf9,color:#0d47a1,stroke-width:1px
+  classDef note fill:#f7f7f7,stroke:#bbb,color:#333,stroke-width:1px
+
+  class HTTP,TLS,TCP,IP layer
+  class G_TLS,G_HTTP,G_TCP,G_IP note
