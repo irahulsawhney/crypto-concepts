@@ -1,0 +1,40 @@
+%% TLS 1.3 Overview & Best Practices
+flowchart TB
+  title["HTTPS Stack - top to bottom"]
+  HTTP["HTTP - application data"]
+  TLS["TLS 1.3 - secure channel"]
+  TCP["TCP - reliable delivery"]
+  IP["IP - routing"]
+  HTTP --> TLS --> TCP --> IP
+
+  subgraph TLS_Guarantees["TLS 1.3 — What it Guarantees"]
+    direction TB
+    G1["Confidentiality - AEAD encrypts app records"]
+    G2["Integrity - AEAD tag detects tampering"]
+    G3["Server Authenticity - certificate via Web PKI"]
+    G4["Forward Secrecy - ephemeral ECDHE"]
+    G5["Optional Client Auth - mTLS"]
+  end
+  TLS -.provides.-> G1
+  TLS -.provides.-> G2
+  TLS -.provides.-> G3
+  TLS -.provides.-> G4
+  TLS -.optional.-> G5
+
+  subgraph BestPractices["Common Safe Defaults & Pitfalls"]
+    direction TB
+    D1["Prefer AEAD suites:\n• AES-GCM or ChaCha20-Poly1305"]
+    D2["Use ECDHE key exchange - forward secrecy"]
+    D3["Validate certificates - hostnames, chains, expiry"]
+    D4["Disable legacy: TLS 1.0/1.1, RSA key exchange"]
+    D5["Never reuse ephemeral ECDHE keys across sessions"]
+    D6["For internal auth, consider mTLS or signed tokens with short expiry"]
+  end
+
+  classDef layer fill:#eef6ff,stroke:#90caf9,color:#0d47a1,stroke-width:1px
+  classDef note fill:#f7f7f7,stroke:#bbb,color:#333,stroke-width:1px
+  classDef tip fill:#f0f4c3,stroke:#cddc39,color:#33691e,stroke-width:1px
+
+  class HTTP,TLS,TCP,IP layer
+  class G1,G2,G3,G4,G5 note
+  class D1,D2,D3,D4,D5,D6 tip

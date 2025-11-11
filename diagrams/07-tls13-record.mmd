@@ -1,0 +1,33 @@
+%% TLS 1.3 Record Structure - High Level
+flowchart LR
+  subgraph Inputs["Record Inputs"]
+    direction TB
+    K[(Traffic Key)]
+    SN["Record Sequence Number\nforms nonce"]
+    P["Plaintext fragment"]
+    AD["Record header - visible"]
+  end
+
+  ENC[[AEAD_Encrypt K, Nonce from SN, P, AD]]
+  K --> ENC
+  SN --> ENC
+  P --> ENC
+  AD --> ENC
+  ENC --> C["Ciphertext"]
+  ENC --> T["Auth Tag"]
+
+  subgraph OnTheWire["On the wire"]
+    direction LR
+    WAD[Record header]
+    WC[Ciphertext]
+    WT[Auth Tag]
+  end
+
+  AD -.-> WAD
+  C -.-> WC
+  T -.-> WT
+
+  classDef callout fill:#f7f7f7,stroke:#bbb,color:#333
+  classDef strong fill:#ede7f6,stroke:#9575cd,color:#4527a0,stroke-width:1px
+  class Inputs,OnTheWire callout
+  class ENC strong

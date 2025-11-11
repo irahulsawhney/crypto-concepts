@@ -1,0 +1,21 @@
+%% TLS 1.3 Handshake - Happy Path
+sequenceDiagram
+  autonumber
+  participant C as Client
+  participant S as Server
+
+  Note over C,S: Goal: agree on fresh symmetric keys + prove server identity
+  C->>S: ClientHello - supported_versions, cipher_suites, key_share ECDHE, SNI, ALPN
+  S->>C: ServerHello - chosen_version, cipher_suite, key_share
+  Note over C,S: After ServerHello, handshake traffic keys are derived via HKDF, remaining handshake is encrypted
+  S-->>C: EncryptedExtensions
+  S-->>C: Certificate - server cert chain
+  S-->>C: CertificateVerify - proves private-key ownership
+  S-->>C: Finished
+  C-->>S: Finished
+  Note over C,S: Now both sides have application traffic keys with AEAD
+
+  rect rgb(245, 255, 245)
+  C-->>S: Application Data - AEAD records
+  S-->>C: Application Data - AEAD records
+  end
