@@ -13,8 +13,8 @@ sequenceDiagram
   ClientSvc->>ServerSvc: ClientHello (policy-approved cipher list + key_share)
   Note over ClientSvc: Include session resumption only if ticket cache says valid
 
-  ServerSvc->>ServerSvc: Validate supported cipher overlap; reject weak params
-  ServerSvc->>ServerSvc: Generate ephemeral ECDHE key pair; bind to connection state
+  ServerSvc->>ServerSvc: Validate supported cipher overlap, reject weak params
+  ServerSvc->>ServerSvc: Generate ephemeral ECDHE key pair, bind to connection state
   ServerSvc->>ClientSvc: ServerHello (selected cipher, key_share)
 
   ServerSvc->>ServerSvc: Derive handshake traffic secrets via HKDF
@@ -23,7 +23,7 @@ sequenceDiagram
   Note over ServerSvc: CertificateRequest only when client auth is required
 
   ClientSvc->>ClientSvc: Verify certificate chain against CA bundle + hostname/SAN
-  ClientSvc->>ClientSvc: Enforce revocation / pin policy if configured
+  ClientSvc->>ClientSvc: Enforce revocation & pin policy if configured
   ClientSvc->>ClientSvc: Derive handshake secrets; compare Finished MAC
 
   ClientSvc->>ClientSvc: Select client cert + key material per policy (e.g., mTLS profile)
@@ -31,7 +31,7 @@ sequenceDiagram
   ClientSvc->>ServerSvc: Client Certificate + CertificateVerify + Finished
 
   ServerSvc->>ServerSvc: Validate client cert chain, revocation status, and authz (SPIFFE, SAN, etc.)
-  Note over ServerSvc: Map client identity to service account/tenant before issuing tokens
+  Note over ServerSvc: Map client identity to service account or tenant before issuing tokens
 
   rect rgb(245,245,255)
   ClientSvc-->>ServerSvc: AEAD application data (rotated keys, sequence numbers)
