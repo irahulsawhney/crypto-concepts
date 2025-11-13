@@ -51,3 +51,16 @@
 8) ECDHE ephemeral keys must never be reused (forward secrecy).  
 9) HTTPS stack: HTTP → TLS → TCP → IP.  
 10) Envelope: DEK encrypts data; KEK wraps DEK; rotate KEK by rewrapping, DEK by re-encrypting.
+
+---
+
+### Acronym Legend
+- **ACM** — AWS Certificate Manager  
+- **AEAD** — Authenticated Encryption with Associated Data  
+- **CA** — Certificate Authority  
+- **CRL** — Certificate Revocation List  
+- **ECDHE** — Elliptic Curve Diffie-Hellman Ephemeral  
+- **HKDF** — HMAC-based Key Derivation Function  
+- **KMS** — Key Management Service  
+- **OCSP** — Online Certificate Status Protocol  
+- **PKI** — Public Key Infrastructure  
