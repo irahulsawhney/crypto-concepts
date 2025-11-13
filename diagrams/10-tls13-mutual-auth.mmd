@@ -1,0 +1,47 @@
+%% TLS 1.3 Mutual Authentication Flow
+sequenceDiagram
+  participant Client
+  participant Server
+
+  Note over Client,Server: Phase 1: Key Exchange & Negotiation
+
+  Client->>Server: 1. ClientHello (Proposed Ciphers, Client ECDHE Public Parameter)
+  activate Server
+
+  Server->>Server: 2. Process ClientHello & Select Cipher Suite (e.g., AES-GCM)
+  Server->>Server: 3. Generate Server's Ephemeral ECDHE Private/Public Key Pair
+
+  Server->>Client: 4. ServerHello (Selected Cipher, Server ECDHE Public Parameter)
+  activate Client
+
+  Note over Client,Server: Phase 2: Key Derivation & Mutual Authentication
+
+  Client-->>Client: 5a. Key Agreement (Use Client **ephemeral** ECDHE Private Key + Server Public Parameter)<br>to derive Shared Secret (Master Secret)
+  Server-->>Server: 5b. Key Agreement (Use Server **ephemeral** ECDHE Private Key + Client Public Parameter)<br>to derive Shared Secret (Master Secret)
+
+  Note over Client,Server: Shared Secret derived independently on both sides.
+
+  Server->>Server: 6. Derive **Server Traffic Key** (from Shared Secret)
+  Server->>Server: 7. Use Server's Long-Term Private Key to sign Handshake Transcript
+
+  Server->>Client: 8. EncryptedExtensions
+  Server->>Client: 9. CertificateRequest (ask client to authenticate)
+  Server->>Client: 10. **Server Certificate**
+  Server->>Client: 11. CertificateVerify (Signature)
+  Server->>Client: 12. **Finished**
+  Note right of Server: Server authenticates its identity and requests client auth.
+
+  Client-->>Client: 13. Validate Server's Certificate (Trust Chain)
+  Client-->>Client: 14. Verify Server's Signature (using Server Public Key)
+  Client-->>Client: 15. Derive **Client Traffic Key** (from Shared Secret)
+
+  Client->>Client: 16. Use Client's Long-Term Private Key to sign Handshake Transcript
+
+  Client->>Server: 17. **Client Certificate**, CertificateVerify (Signature), **Finished**
+  deactivate Server
+  Note left of Client: Client authenticates its identity.
+
+  Note over Client,Server: Handshake Complete. **Symmetric AEAD Traffic Keys** are ready for use.
+
+  Client->>Server: 18. Encrypted Application Data (AEAD)
+  deactivate Client
