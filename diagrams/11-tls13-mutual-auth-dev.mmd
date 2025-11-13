@@ -1,0 +1,40 @@
+%% TLS 1.3 Mutual Auth - Dev Responsibilities
+sequenceDiagram
+  autonumber
+  participant ClientSvc as Client Service
+  participant PKI as PKI / Trust Store
+  participant ServerSvc as Server Service
+
+  Note over ClientSvc: Startup: load policy (TLS versions, cipher suites, groups, cert refs)
+  ClientSvc->>PKI: Fetch / refresh trusted CA bundle & server pins
+  ClientSvc->>ClientSvc: Generate ephemeral ECDHE key pair (per connection); zeroize old keys
+
+  ClientSvc->>ServerSvc: ClientHello (policy-approved cipher list + key_share)
+  Note over ClientSvc: Include session resumption only if ticket cache says valid
+
+  ServerSvc->>ServerSvc: Validate supported cipher overlap; reject weak params
+  ServerSvc->>ServerSvc: Generate ephemeral ECDHE key pair; bind to connection state
+  ServerSvc->>ClientSvc: ServerHello (selected cipher, key_share)
+
+  ServerSvc->>ServerSvc: Derive handshake traffic secrets via HKDF
+  ServerSvc->>ServerSvc: Sign transcript with long-term private key stored in HSM
+  ServerSvc->>ClientSvc: EncryptedExtensions + CertificateRequest + Certificate + CertificateVerify + Finished
+  Note over ServerSvc: CertificateRequest only when client auth is required
+
+  ClientSvc->>ClientSvc: Verify certificate chain against CA bundle + hostname/SAN
+  ClientSvc->>ClientSvc: Enforce revocation / pin policy if configured
+  ClientSvc->>ClientSvc: Derive handshake secrets; compare Finished MAC
+
+  ClientSvc->>ClientSvc: Select client cert + key material per policy (e.g., mTLS profile)
+  ClientSvc->>ClientSvc: Sign transcript using long-term key (via secure keystore)
+  ClientSvc->>ServerSvc: Client Certificate + CertificateVerify + Finished
+
+  ServerSvc->>ServerSvc: Validate client cert chain, revocation status, and authz (SPIFFE, SAN, etc.)
+  Note over ServerSvc: Map client identity to service account/tenant before issuing tokens
+
+  rect rgb(245,245,255)
+  ClientSvc-->>ServerSvc: AEAD application data (rotated keys, sequence numbers)
+  ServerSvc-->>ClientSvc: AEAD responses
+  end
+
+  Note over ClientSvc,ServerSvc: Dev teams own policy configs, keystore integration, telemetry, and key rotation hooks.
