@@ -5,9 +5,9 @@ sequenceDiagram
   participant Server
   participant Trust as Trust Store / PKI
 
-  Note over Trust: Client-owned config (CA bundle, pins, revocation endpoints, KMS references)
-  Client->>Trust: Load policy + trusted cert authorities
-  Note over Client: Ephemeral handshake keys generated in app memory (not long-term KMS keys)
+  Note over Trust: Client-owned config (ACM Private CA / CloudHSM certs, pins, OCSP/CRL endpoints, KMS refs)
+  Client->>Trust: Load policy + trusted cert authorities (ACM, Secrets Manager, SSM Parameter Store)
+  Note over Client: Ephemeral handshake keys generated in app memory (not long-term ACM/KMS keys)
   Client->>Client: Generate fresh handshake keys
 
   Client->>Server: ClientHello (versions, cipher suites, key share)
