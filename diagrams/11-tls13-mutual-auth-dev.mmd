@@ -24,7 +24,7 @@ sequenceDiagram
 
   ClientSvc->>ClientSvc: Verify certificate chain against CA bundle + hostname/SAN
   ClientSvc->>ClientSvc: Enforce revocation & pin policy if configured
-  ClientSvc->>ClientSvc: Derive handshake secrets; compare Finished MAC
+  ClientSvc->>ClientSvc: Derive handshake secrets, compare Finished MAC
 
   ClientSvc->>ClientSvc: Select client cert + key material per policy (e.g., mTLS profile)
   ClientSvc->>ClientSvc: Sign transcript using long-term key (via secure keystore)
