@@ -1,13 +1,13 @@
-%% Transport Layer Security (TLS) 1.3 Mutual Auth - Dev Responsibilities
+%% TLS 1.3 Mutual Auth - Dev Responsibilities
 sequenceDiagram
   autonumber
   participant ClientSvc as Client Service
   participant PKI as PKI / Trust Store
   participant ServerSvc as Server Service
 
-  Note over ClientSvc: Startup: load policy (Transport Layer Security versions, cipher suites, groups, cert refs)
-  Note over PKI: Client-configured trust store lists Public Key Infrastructure (PKI) anchors, Certificate Authority (CA) pins, and revocation sources.
-  ClientSvc->>PKI: Fetch & refresh trusted Certificate Authority (CA) bundle & server pins
+  Note over ClientSvc: Startup: load TLS policy (versions, cipher suites, groups, cert refs)
+  Note over PKI: Trust store = PKI anchors, CA pins, stapling/OCSP config owned by client team
+  ClientSvc->>PKI: Fetch & refresh trusted CA bundle + server pins
   ClientSvc->>ClientSvc: Generate ephemeral ECDHE key pair (per connection)
   ClientSvc->>ClientSvc: Zeroize retired handshake keys in memory
 
@@ -18,23 +18,23 @@ sequenceDiagram
   ServerSvc->>ServerSvc: Generate ephemeral ECDHE key pair, bind to connection state
   ServerSvc->>ClientSvc: ServerHello (selected cipher, key_share)
 
-  ServerSvc->>ServerSvc: Derive handshake traffic secrets via HMAC-based Key Derivation Function (HKDF)
-  ServerSvc->>ServerSvc: Sign transcript with long-term private key stored in Hardware Security Module (HSM)
+  ServerSvc->>ServerSvc: Derive handshake traffic secrets via HKDF
+  ServerSvc->>ServerSvc: Sign transcript with long-term private key stored in HSM
   ServerSvc->>ClientSvc: EncryptedExtensions + CertificateRequest + Certificate + CertificateVerify + Finished
   Note over ServerSvc: CertificateRequest only when client auth is required
 
-  ClientSvc->>ClientSvc: Verify certificate chain against CA bundle + hostname/Subject Alternative Name (SAN)
+  ClientSvc->>ClientSvc: Verify certificate chain against CA bundle + hostname/SAN
   ClientSvc->>ClientSvc: Enforce revocation & pin policy if configured
-  ClientSvc->>ClientSvc: Derive handshake secrets, compare Finished Message Authentication Code (MAC)
+  ClientSvc->>ClientSvc: Derive handshake secrets, compare Finished MAC
 
-  ClientSvc->>ClientSvc: Select client cert + key material per policy (e.g., mutual TLS (mTLS) profile)
+  ClientSvc->>ClientSvc: Select client cert + key material per policy (e.g., mTLS profile)
   ClientSvc->>ClientSvc: Sign transcript using long-term key (via secure keystore)
   ClientSvc->>ServerSvc: Client Certificate + CertificateVerify + Finished
 
-  ServerSvc->>ServerSvc: Validate client cert chain, revocation status, and authorization (Secure Production Identity Framework for Everyone (SPIFFE), SAN, etc.)
+  ServerSvc->>ServerSvc: Validate client cert chain, revocation status, and authorization (SPIFFE, SAN, etc.)
   Note over ServerSvc: Map client identity to service account or tenant before issuing tokens
 
-  ClientSvc-->>ServerSvc: Authenticated Encryption with Associated Data (AEAD) application data (rotated keys, sequence numbers)
+  ClientSvc-->>ServerSvc: AEAD application data (rotated keys, sequence numbers)
   ServerSvc-->>ClientSvc: AEAD responses
 
-  Note over ClientSvc,ServerSvc: Dev teams own policy configs, keystore integration, telemetry, and key rotation hooks.
+  Note over ClientSvc,ServerSvc: Dev teams own policy configs, keystore integration, telemetry, and key rotation hooks. Legend: TLS, PKI, CA, HKDF, HSM, SAN, MAC, mTLS, SPIFFE, AEAD.
