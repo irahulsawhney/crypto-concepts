@@ -7,7 +7,8 @@ sequenceDiagram
 
   Note over ClientSvc: Startup: load policy (TLS versions, cipher suites, groups, cert refs)
   ClientSvc->>PKI: Fetch / refresh trusted CA bundle & server pins
-  ClientSvc->>ClientSvc: Generate ephemeral ECDHE key pair (per connection); zeroize old keys
+  ClientSvc->>ClientSvc: Generate ephemeral ECDHE key pair (per connection)
+  ClientSvc->>ClientSvc: Zeroize retired handshake keys in memory
 
   ClientSvc->>ServerSvc: ClientHello (policy-approved cipher list + key_share)
   Note over ClientSvc: Include session resumption only if ticket cache says valid
