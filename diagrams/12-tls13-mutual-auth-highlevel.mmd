@@ -21,6 +21,6 @@ sequenceDiagram
   Client->>Server: Client Certificate + CertificateVerify + Finished
   Server->>Server: Verify client identity & Finished
 
-  Note over Client,Server: Application traffic keys derived; ready for encrypted records
+  Note over Client,Server: Application traffic keys derived, ready for encrypted records
   Client-->>Server: AEAD application data
   Server-->>Client: AEAD responses
