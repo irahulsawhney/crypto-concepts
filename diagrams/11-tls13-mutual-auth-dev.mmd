@@ -32,7 +32,7 @@ sequenceDiagram
   ClientSvc->>ServerSvc: Client Certificate + CertificateVerify + Finished
 
   ServerSvc->>ServerSvc: Validate client cert chain, revocation status, and authorization (SPIFFE, SAN, etc.)
-  ServerSvc->>ServerSvc: Derive client-facing handshake secrets; verify client Finished MAC
+  ServerSvc->>ServerSvc: Derive client-facing handshake secrets, verify client Finished MAC
   Note over ServerSvc: Map client identity to service account or tenant before issuing tokens
 
   Note over ClientSvc,ServerSvc: Both sides derive application traffic keys from handshake secrets before sending records
