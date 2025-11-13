@@ -6,7 +6,7 @@ sequenceDiagram
   participant ServerSvc as Server Service
 
   Note over ClientSvc: Startup: load policy (TLS versions, cipher suites, groups, cert refs)
-  ClientSvc->>PKI: Fetch / refresh trusted CA bundle & server pins
+  ClientSvc->>PKI: Fetch & refresh trusted CA bundle & server pins
   ClientSvc->>ClientSvc: Generate ephemeral ECDHE key pair (per connection)
   ClientSvc->>ClientSvc: Zeroize retired handshake keys in memory
 
