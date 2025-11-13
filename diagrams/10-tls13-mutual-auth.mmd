@@ -4,44 +4,46 @@ sequenceDiagram
   participant Server
 
   Note over Client,Server: Phase 1: Key Exchange & Negotiation
-
-  Client->>Server: 1. ClientHello (Proposed Ciphers, Client ECDHE Public Parameter)
+  Note over Client: Local preparation happens before anything hits the wire.
+  Client-->>Client: 1. Load supported TLS versions/cipher suites/key-share groups from policy
+  Client-->>Client: 2. Generate ephemeral ECDHE key pair and compute public parameter
+  Client->>Server: 3. ClientHello (Proposed Ciphers, Client ECDHE Public Parameter)
   activate Server
 
-  Server->>Server: 2. Process ClientHello & Select Cipher Suite (e.g., AES-GCM)
-  Server->>Server: 3. Generate Server's Ephemeral ECDHE Private/Public Key Pair
+  Server->>Server: 4. Process ClientHello & Select Cipher Suite (e.g., AES-GCM)
+  Server->>Server: 5. Generate Server's Ephemeral ECDHE Private/Public Key Pair
 
-  Server->>Client: 4. ServerHello (Selected Cipher, Server ECDHE Public Parameter)
+  Server->>Client: 6. ServerHello (Selected Cipher, Server ECDHE Public Parameter)
   activate Client
 
   Note over Client,Server: Phase 2: Key Derivation & Mutual Authentication
 
-  Client-->>Client: 5a. Key Agreement (Use Client **ephemeral** ECDHE Private Key + Server Public Parameter)<br>to derive Shared Secret (Master Secret)
-  Server-->>Server: 5b. Key Agreement (Use Server **ephemeral** ECDHE Private Key + Client Public Parameter)<br>to derive Shared Secret (Master Secret)
+  Client-->>Client: 7a. Key Agreement (Use Client **ephemeral** ECDHE Private Key + Server Public Parameter)<br>to derive Shared Secret (Master Secret)
+  Server-->>Server: 7b. Key Agreement (Use Server **ephemeral** ECDHE Private Key + Client Public Parameter)<br>to derive Shared Secret (Master Secret)
 
   Note over Client,Server: Shared Secret derived independently on both sides.
 
-  Server->>Server: 6. Derive **Server Traffic Key** (from Shared Secret)
-  Server->>Server: 7. Use Server's Long-Term Private Key to sign Handshake Transcript
+  Server->>Server: 8. Derive **Server Traffic Key** (from Shared Secret)
+  Server->>Server: 9. Use Server's Long-Term Private Key to sign Handshake Transcript
 
-  Server->>Client: 8. EncryptedExtensions
-  Server->>Client: 9. CertificateRequest (ask client to authenticate)
-  Server->>Client: 10. **Server Certificate**
-  Server->>Client: 11. CertificateVerify (Signature)
-  Server->>Client: 12. **Finished**
+  Server->>Client: 10. EncryptedExtensions
+  Server->>Client: 11. CertificateRequest (ask client to authenticate)
+  Server->>Client: 12. **Server Certificate**
+  Server->>Client: 13. CertificateVerify (Signature)
+  Server->>Client: 14. **Finished**
   Note right of Server: Server authenticates its identity and requests client auth.
 
-  Client-->>Client: 13. Validate Server's Certificate (Trust Chain)
-  Client-->>Client: 14. Verify Server's Signature (using Server Public Key)
-  Client-->>Client: 15. Derive **Client Traffic Key** (from Shared Secret)
+  Client-->>Client: 15. Validate Server's Certificate (Trust Chain)
+  Client-->>Client: 16. Verify Server's Signature (using Server Public Key)
+  Client-->>Client: 17. Derive **Client Traffic Key** (from Shared Secret)
 
-  Client->>Client: 16. Use Client's Long-Term Private Key to sign Handshake Transcript
+  Client->>Client: 18. Use Client's Long-Term Private Key to sign Handshake Transcript
 
-  Client->>Server: 17. **Client Certificate**, CertificateVerify (Signature), **Finished**
+  Client->>Server: 19. **Client Certificate**, CertificateVerify (Signature), **Finished**
   deactivate Server
   Note left of Client: Client authenticates its identity.
 
   Note over Client,Server: Handshake Complete. **Symmetric AEAD Traffic Keys** are ready for use.
 
-  Client->>Server: 18. Encrypted Application Data (AEAD)
+  Client->>Server: 20. Encrypted Application Data (AEAD)
   deactivate Client
