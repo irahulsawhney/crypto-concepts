@@ -1,0 +1,26 @@
+%% TLS 1.3 Mutual Auth - High-Level Flow
+sequenceDiagram
+  autonumber
+  participant Client
+  participant Server
+  participant Trust as Trust Store / PKI
+
+  Client->>Trust: Load policy + trusted cert authorities
+  Client->>Client: Generate fresh handshake keys
+
+  Client->>Server: ClientHello (versions, cipher suites, key share)
+  Server->>Server: Pick cipher suite + generate own handshake keys
+  Server->>Client: ServerHello (chosen params)
+
+  Client-->>Server: Derive shared secret (ECDHE math happens on both sides)
+  Note over Client,Server: Shared secret feeds HKDF to produce handshake keys
+
+  Server->>Client: EncryptedExtensions + Certificate chain + CertificateVerify + Finished
+  Client->>Client: Verify server identity & Finished
+
+  Client->>Server: Client Certificate + CertificateVerify + Finished
+  Server->>Server: Verify client identity & Finished
+
+  Note over Client,Server: Application traffic keys derived; ready for encrypted records
+  Client-->>Server: AEAD application data
+  Server-->>Client: AEAD responses
