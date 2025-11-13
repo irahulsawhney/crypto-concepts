@@ -9,7 +9,7 @@ sequenceDiagram
   Note over PKI: Trust store = PKI anchors, CA pins, stapling/OCSP config owned by client team
   ClientSvc->>PKI: Fetch & refresh trusted CA bundle + server pins
   ClientSvc->>ClientSvc: Generate ephemeral ECDHE key pair (per connection)
-  ClientSvc->>ClientSvc: Zeroize retired handshake keys in memory
+  ClientSvc->>ClientSvc: Wipe old handshake keys from memory
 
   ClientSvc->>ServerSvc: ClientHello (policy-approved cipher list + key_share)
   Note over ClientSvc: Include session resumption only if ticket cache says valid
