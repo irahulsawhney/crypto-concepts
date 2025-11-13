@@ -5,7 +5,9 @@ sequenceDiagram
   participant Server
   participant Trust as Trust Store / PKI
 
+  Note over Trust: Client-owned config (CA bundle, pins, revocation endpoints, KMS references)
   Client->>Trust: Load policy + trusted cert authorities
+  Note over Client: Ephemeral handshake keys generated in app memory (not long-term KMS keys)
   Client->>Client: Generate fresh handshake keys
 
   Client->>Server: ClientHello (versions, cipher suites, key share)
