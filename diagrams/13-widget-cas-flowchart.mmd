@@ -1,18 +1,17 @@
-%% Widget + CAS + Webhook — Flowchart
-%% Widget + CAS + Webhook — Flowchart (matches image)
-flowchart TD
-  Browser["Browser"]
-  Supplier["Supplier Service"]
-  Address["Address Service\n(AEAD + KMS)"]
-  Federate["Federate (IdP)"]
+%% Widget + CAS + Webhook — Sequence Diagram
+sequenceDiagram
+  participant Browser
+  participant Supplier
+  participant Address as "Address Service (AEAD + KMS)"
+  participant Federate as "Federate (IdP)"
 
-  Browser -- "TLS 1.3 POST\nNew Address" --> Supplier
-  Supplier -- "addressID" --> Browser
-  Supplier -- "addressID" --> Address
-  Address -- "addressID" --> Supplier
-  Supplier -- "Store address_ref only" --> Supplier
-  Browser -- "TLS GET view(address_id)\nwith short-lived token" --> Supplier
-  Supplier -- "addressID" --> Browser
-  Browser -- "Render plaintext address" --> Browser
-  Supplier -- "client assertion" --> Federate
-  Federate -- "access token" --> Supplier
+  Browser->>Supplier: TLS 1.3 POST New Address
+  Supplier-->>Browser: addressID
+  Supplier->>Address: addressID
+  Address-->>Supplier: addressID
+  Supplier->>Supplier: Store address_ref only
+  Browser->>Supplier: TLS GET view(address_id) with short-lived token
+  Supplier-->>Browser: addressID
+  Browser->>Browser: Render plaintext address
+  Supplier->>Federate: client assertion
+  Federate-->>Supplier: access token
