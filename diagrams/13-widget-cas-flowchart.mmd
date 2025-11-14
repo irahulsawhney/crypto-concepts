@@ -1,19 +1,18 @@
 %% Widget + CAS + Webhook — Flowchart
-%% Widget + CAS + Webhook — Sequence Diagram
-sequenceDiagram
-  participant B as Browser (Host Page)
-  participant W as Address Widget (iframe)
-  participant S as Supplier API + DB
-  participant C as CAS (Canonical Address Service)
-  participant F as Federate (IdP)
+%% Widget + CAS + Webhook — Flowchart (matches image)
+flowchart TD
+  Browser["Browser"]
+  Supplier["Supplier Service"]
+  Address["Address Service\n(AEAD + KMS)"]
+  Federate["Federate (IdP)"]
 
-  B->>W: 0) Load sandboxed widget (CSP/origin allowlist)
-  W->>C: 1) Normalize + createAddress (AEAD or TLS 1.3)
-  C-->>W: 2) address_id (success)
-  C-->>S: 3) JWS webhook {supplier_id, address_id}
-  S->>S: Persist address_ref only (no plaintext)
-  S-->>W: 4) Short-lived view token (via host page)
-  W->>C: 5) TLS GET view(address_id, token)
-  C-->>W: Render plaintext inside iframe
-  S->>F: 6) Client assertion → access token (for CAS)
-  F-->>S: Scoped token, S verifies webhooks via CAS JWKS (kid rotation)
+  Browser -- "TLS 1.3 POST\nNew Address" --> Supplier
+  Supplier -- "addressID" --> Browser
+  Supplier -- "addressID" --> Address
+  Address -- "addressID" --> Supplier
+  Supplier -- "Store address_ref only" --> Supplier
+  Browser -- "TLS GET view(address_id)\nwith short-lived token" --> Supplier
+  Supplier -- "addressID" --> Browser
+  Browser -- "Render plaintext address" --> Browser
+  Supplier -- "client assertion" --> Federate
+  Federate -- "access token" --> Supplier
