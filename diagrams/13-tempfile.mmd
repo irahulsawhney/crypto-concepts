@@ -16,4 +16,4 @@ sequenceDiagram
   W->>C: 5) TLS GET view(address_id, token)
   C-->>W: Render plaintext **inside iframe**
   S->>F: 6) Client assertion → access token (for CAS)
-  F-->>S: Scoped token; S verifies webhooks via CAS JWKS (kid rotation)
+  F-->>S: Scoped token, S verifies webhooks via CAS JWKS (kid rotation)
