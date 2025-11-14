@@ -1,0 +1,18 @@
+%% Widget + CAS + Webhook — Flowchart
+flowchart TD
+  B["Browser<br/>(Host Page)"]
+  W["Address Widget<br/>(iframe)"]
+  S["Supplier API + DB"]
+  C["CAS<br/>(Canonical Address Service)"]
+  F["Federate (IdP)"]
+
+  B -->|0) Load sandboxed widget<br/>(CSP/origin allowlist)| W
+  W -->|1) Normalize + createAddress<br/>(AEAD or TLS 1.3)| C
+  C -->|2) address_id (success)| W
+  C -->|3) JWS webhook<br/>{supplier_id, address_id}| S
+  S -->|Persist address_ref only<br/>(no plaintext)| S
+  S -->|4) Short-lived view token<br/>(via host page)| W
+  W -->|5) TLS GET view(address_id, token)| C
+  C -->|Render plaintext<br/>inside iframe| W
+  S -->|6) Client assertion → access token<br/>(for CAS)| F
+  F -->|Scoped token,<br/>S verifies webhooks via CAS JWKS (kid rotation)| S
