@@ -1,0 +1,67 @@
+mindmap
+  root((Potential Problems))
+    Security & Keys
+      Key sprawl
+        unclear scope
+        stale keys
+        slow revocation
+      Key exportability
+        export allowlist policy
+        wrap only no export
+        HSM partitions isolation
+        dual control and audit
+      Custody boundaries
+        BYOK scope clarity
+        external HSM trust
+        residency legal compulsion
+      Nonce misuse
+        AEAD nonce reuse
+        weak randomness
+      Weak algorithms
+        RSA PKCS1 v1_5
+        SHA1 anywhere
+    Identity & Tokens
+      Token leakage
+        logs or URLs
+        browser storage
+      Lifetime issues
+        long lived tokens
+        clock skew
+      Audience scope
+        wrong audience
+        overbroad scopes
+    AAD & Binding
+      Inconsistent fields
+        changing schema
+        missing tenant
+      Replay risk
+        token reuse
+        no jti check
+    Widget Isolation
+      XSS and Clickjacking
+        weak CSP
+        no iframe sandbox
+      Origin checks
+        wildcard allowlist
+        lax postMessage
+    Webhooks & Signatures
+      No signature check
+        JWKS not refreshed
+        alg confusion
+      No idempotency
+        duplicate writes
+        replayed events
+    Privacy & Data
+      PII exposure
+        error pages
+        analytics taps
+      Search leaks
+        deterministic enc
+        weak hashing
+    Reliability & Ops
+      CAS outage
+        no degrade mode
+        retry storms
+      Observability gaps
+        missing audits
+        noisy alerts
