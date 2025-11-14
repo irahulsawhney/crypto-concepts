@@ -1,0 +1,74 @@
+graph TD
+  %% Protocols & Tokens
+  subgraph Protocols/Tokens
+    TLS[TLS 1.3]
+    mTLS[mTLS]
+    SSH[SSH]
+    JWT[JWT]
+    JWS[JWS -signed]
+    JWE[JWE -encrypted]
+    OIDC[OIDC]
+    DPoP[DPoP]
+  end
+
+  %% Trust Models
+  subgraph Trust Models
+    PKI[PKI]
+    TOFU[TOFU]
+    CA[CA]
+    CT[Certificate Transparency]
+  end
+
+  %% Primitives
+  subgraph Primitives
+    AEAD[AEAD]
+    SIG[Digital Signatures]
+    ECDH[X25519/ECDH]
+    HKDF[HKDF]
+    HMAC[HMAC]
+    HASH[SHA-256/BLAKE3]
+    HPKE[HPKE/KEM]
+  end
+
+  %% Key Management & Hardware
+  subgraph Key Mgmt
+    HSM[HSM]
+    KMS[KMS]
+    KEK[KEK]
+    DEK[DEK]
+  end
+  subgraph Hardware Trust
+    TPM[TPM]
+    TEE[TEE]
+  end
+
+  %% Uses/depends relationships
+  TLS --> AEAD
+  TLS --> ECDH
+  TLS --> HKDF
+  TLS --> PKI
+  mTLS --> PKI
+
+  SSH --> TOFU
+  SSH --> AEAD
+  SSH --> ECDH
+
+  JWT --> JWS
+  JWT --> JWE
+  JWS --> SIG
+  JWE --> AEAD
+  JWE --> HPKE
+  DPoP --> JWS
+  OIDC --> JWT
+  OIDC --> PKI
+
+  PKI --> CA
+  PKI --> CT
+
+  HSM --> KMS
+  KMS --> KEK
+  KEK --> DEK
+  AEAD --> DEK
+
+  TPM --> HSM
+  TEE --> SIG
